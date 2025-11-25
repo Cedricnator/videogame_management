@@ -1,0 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "./prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model VideoGame {
+  id                Int      @id @default(autoincrement())
+  nombre            String   @db.VarChar(255)
+  genero            String   @db.VarChar(100)
+  plataforma        String   @db.VarChar(100)
+  fecha_lanzamiento DateTime @db.Timestamptz()
+  precio            Float    @db.DoublePrecision()
+
+  @@map("video_game")
+}
