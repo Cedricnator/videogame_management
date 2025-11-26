@@ -1,49 +1,37 @@
 import {
-  BadRequestException,
   Injectable,
-  Logger,
+  BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
 import { CreateVideogameDto } from './dto/create-videogame.dto';
 import { UpdateVideogameDto } from './dto/update-videogame.dto';
-import { PrismaService } from 'prisma/prisma.service';
 import { VideogameMapper } from './videograme.mapper';
-import { VideogameEntity } from './entities/videogame.entity';
 
 @Injectable()
 export class VideogameService {
-  private readonly logger = new Logger(VideogameService.name);
-
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(
-    createVideogameDto: CreateVideogameDto,
-  ): Promise<VideogameEntity> {
-    this.logger.log(
-      'Creating a new videogame with params: ' +
-        JSON.stringify(createVideogameDto),
-    );
+  async create(createVideogameDto: CreateVideogameDto) {
     const created = await this.prismaService.videoGame.create({
       data: {
         nombre: createVideogameDto.nombre,
         plataforma: createVideogameDto.plataforma,
         genero: createVideogameDto.genero,
         precio: createVideogameDto.precio,
-        fecha_lanzamiento: new Date(createVideogameDto.fechaLanzamiento),
+        fecha_lanzamiento: createVideogameDto.fechaLanzamiento,
       },
     });
     return VideogameMapper.toEntity(created);
   }
 
-  async findAll(): Promise<VideogameEntity[]> {
-    this.logger.log('Retrieving all videogames');
+  async findAll() {
     return VideogameMapper.toListEntity(
       await this.prismaService.videoGame.findMany(),
     );
   }
 
-  async findOne(id: number): Promise<VideogameEntity> {
-    this.logger.log('Retrieving videogame with id: ' + id);
+  async findOne(id: number) {
     if (id <= 0) throw new BadRequestException('Invalid ID');
     const videogame = await this.prismaService.videoGame.findUnique({
       where: { id: id },
@@ -53,11 +41,7 @@ export class VideogameService {
     return VideogameMapper.toEntity(videogame);
   }
 
-  async update(
-    id: number,
-    updateVideogameDto: UpdateVideogameDto,
-  ): Promise<VideogameEntity> {
-    this.logger.log('Updating videogame with id: ' + id);
+  async update(id: number, updateVideogameDto: UpdateVideogameDto) {
     const existingGame = await this.findOne(id);
     const updateData = Object.assign(existingGame, updateVideogameDto);
     const updated = await this.prismaService.videoGame.update({
@@ -73,13 +57,10 @@ export class VideogameService {
     return VideogameMapper.toEntity(updated);
   }
 
-  async remove(id: number): Promise<VideogameEntity> {
-    this.logger.log('Deleting videogame with id: ' + id);
+  async remove(id: number) {
     await this.findOne(id); // Ensure it exists
-    return VideogameMapper.toEntity(
-      await this.prismaService.videoGame.delete({
-        where: { id: id },
-      }),
-    );
+    return await this.prismaService.videoGame.delete({
+      where: { id: id },
+    });
   }
 }

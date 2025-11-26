@@ -1,34 +1,53 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { VideogameService } from './videogame.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Logger,
+  ParseIntPipe,
+} from '@nestjs/common';
+import { VideogameService } from './VideogameService.js';
 import { CreateVideogameDto } from './dto/create-videogame.dto';
 import { UpdateVideogameDto } from './dto/update-videogame.dto';
 
 @Controller('videogame')
 export class VideogameController {
+  private readonly logger = new Logger(VideogameController.name);
   constructor(private readonly videogameService: VideogameService) {}
 
   @Post()
-  create(@Body() createVideogameDto: CreateVideogameDto) {
-    return this.videogameService.create(createVideogameDto);
+  async create(@Body() createVideogameDto: CreateVideogameDto) {
+    this.logger.log(`Creating a new videogame`);
+    return await this.videogameService.create(createVideogameDto);
   }
 
   @Get()
-  findAll() {
-    return this.videogameService.findAll();
+  async findAll() {
+    this.logger.log('Retrieving all videogames');
+    return await this.videogameService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.videogameService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: string) {
+    this.logger.log(`Retrieving videogame with id: ${id}`);
+    return await this.videogameService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVideogameDto: UpdateVideogameDto) {
-    return this.videogameService.update(+id, updateVideogameDto);
+  async update(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() updateVideogameDto: UpdateVideogameDto,
+  ) {
+    this.logger.log(`Updating videogame with id: ${id}`);
+    return await this.videogameService.update(+id, updateVideogameDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.videogameService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: string) {
+    this.logger.log(`Deleting videogame with id: ${id}`);
+    return await this.videogameService.remove(+id);
   }
 }
