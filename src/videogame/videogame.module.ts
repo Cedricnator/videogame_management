@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { VideogameService } from './VideogameService';
+import { VideogameService } from './videogame.service';
 import { VideogameController } from './videogame.controller';
 
 @Module({

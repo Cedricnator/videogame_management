@@ -9,7 +9,7 @@ import {
   Logger,
   ParseIntPipe,
 } from '@nestjs/common';
-import { VideogameService } from './VideogameService.js';
+import { VideogameService } from './videogame.service';
 import { CreateVideogameDto } from './dto/create-videogame.dto';
 import { UpdateVideogameDto } from './dto/update-videogame.dto';
 
